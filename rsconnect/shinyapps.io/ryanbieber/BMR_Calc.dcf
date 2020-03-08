@@ -1,0 +1,12 @@
+name: BMR_Calc
+title: BMR_Calc
+username:
+account: ryanbieber
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 1919872
+bundleId: 2861666
+url: https://ryanbieber.shinyapps.io/BMR_Calc/
+when: 1583680184.84271
+asMultiple: FALSE
+asStatic: FALSE

@@ -5,8 +5,8 @@ account: ryanbieber
 server: shinyapps.io
 hostUrl: https://api.shinyapps.io/v1
 appId: 1919872
-bundleId: 2861666
+bundleId: 2869344
 url: https://ryanbieber.shinyapps.io/BMR_Calc/
-when: 1583680184.84271
+when: 1583880939.56264
 asMultiple: FALSE
 asStatic: FALSE

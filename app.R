@@ -18,7 +18,9 @@
         ,
         numericInput(inputId = "goal", "Goal Weight:", 175, min = 0, max = 1000)
         ,
-        numericInput(inputId = "cal", "Calorie deficit:", 350, min = 0, max = 1000)
+        numericInput(inputId = "cal", "Caloric deficit/surplus:", -350, min = -2000, max =2000)
+        ,
+        actionButton("goButton", "Pleast tell me!")
       ),
       
       # Show a plot of the generated distribution
@@ -32,6 +34,9 @@
   
   # Server logic
   server <- function(input, output) {
+    observeEvent(
+      eventExpr = input[["goButton"]],
+      handlerExpr = {
     output$weightloss <- renderPlot({
       library(ggplot2)
       library(ggrepel)
@@ -53,7 +58,7 @@
       LeanMassLBS <- weight-(weight*bf/100)
       goalLeanMassLBS <- LeanMassLBS - .25*(weight-goal)
       goalbf <- round(((goal-goalLeanMassLBS)/goal)*100, 1)
-      weightlossday <- seq(weight*3500, goal*3500,-1*deficit)/3500
+      weightlossday <- seq(weight*3500, goal*3500,deficit)/3500
       bodyfatloss <- seq(bf, goalbf, length.out = length(weightlossday))
       days <- seq.Date(Sys.Date(), by = 1, length.out = length(weightlossday))
       
@@ -69,7 +74,7 @@
           box.padding = 0.1, point.padding = 0.1,
           segment.color = 'grey50')
       # 
-      weightloss <- weightloss + ggtitle("Weight loss per day based on inputs", paste("Based on",deficit,"calorie deficit per-day", sep = " "))+
+      weightloss <- weightloss + ggtitle("Weight loss/gain per day based on inputs", paste("Based on",deficit,"calorie deficit/surplus per-day", sep = " "))+
         labs(x = paste(days[1], "until", days[length(days)]), y = "Weight in lbs")
       print(weightloss)
     })
@@ -92,7 +97,7 @@
       LeanMassLBS <- weight-(weight*bf/100)
       goalLeanMassLBS <- LeanMassLBS - .25*(weight-goal)
       goalbf <- round(((goal-goalLeanMassLBS)/goal)*100, 1)
-      weightlossday <- seq(weight*3500, goal*3500,-1*deficit)/3500
+      weightlossday <- seq(weight*3500, goal*3500,deficit)/3500
       bodyfatloss <- seq(bf, goalbf, length.out = length(weightlossday))
       days <- seq.Date(Sys.Date(), by = 1, length.out = length(weightlossday))
       
@@ -125,13 +130,19 @@
           box.padding = 0.1, point.padding = 0.1,
           segment.color = 'grey50')
       
-      bmr <- bmr + ggtitle("BMR(Basal Metabolic Rate) based on activity level")+
+      bmr <- bmr + ggtitle("Caloric expenditure based on activity level")+
         labs(x = paste(days[1], "until", days[length(days)]), y = "BMR in Calories")
       print(bmr)
       })
-    
-    output$time <- renderText(paste("Losing", input$weight-input$goal , "lbs will take you approximetly", (input$weight-input$goal)*3500/input$cal, "days at your current caloric deficit.", sep = " "))
+    if (input$cal<0){
+      output$time <- renderText(paste("Losing", input$weight-input$goal , "lbs will take you approximetly", (( input$goal-input$weight)*3500)/input$cal, "days at your current caloric deficit.", sep = " "))
+      
+    } else {
+      output$time <- renderText(paste("Gaining", input$weight-input$goal , "lbs will take you approximetly", ((input$goal-input$weight)*3500)/input$cal, "days at your current caloric deficit.", sep = " "))
+      
+       }
+      }
+    )
   }
-  
   # Complete app with UI and server components
   shinyApp(ui, server)
